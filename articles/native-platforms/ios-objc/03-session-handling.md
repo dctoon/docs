@@ -1,18 +1,24 @@
 ---
 title: Session Handling
 description: This tutorial will show you how to handle sessions in your app, with the aim of preventing the user from being asked for credentials each time the app is launched.
-budicon: 280
 ---
 
+::: panel-info System Requirements
+This tutorial and seed project have been tested with the following:
+
+* CocoaPods 1.0.0
+* XCode 7.3 (7D175)
+* Simulator - iPhone 6 - iOS 9.3 (13E230)
+  :::
+
 <%= include('../../_includes/_package', {
-  org: 'auth0',
-  repo: 'native-mobile-samples',
-  path: 'iOS/basic-sample-objc',
-  requirements: [
-    'CocoaPods 1.0.0 ',
-    'Xcode 7.3 (7D175)',
-    'Simulator - iPhone 6 - iOS 9.3 (13E230)'
-  ]
+  githubUrl: 'https://github.com/auth0-samples/auth0-ios-objc-sample/tree/master/03-Session-Handling',
+  pkgOrg: 'auth0-samples',
+  pkgRepo: 'auth0-samples/auth0-ios-objc-sample',
+  pkgBranch: 'master',
+  pkgPath: '03-Session-Handling',
+  pkgFilePath: '03-Session-Handling/Auth0Sample/Info.plist',
+  pkgType: 'replace'
 }) %>
 
 ### In the Beginning
@@ -84,15 +90,15 @@ Once you have stored the user's token, next time the app launches, you can use i
     A0SimpleKeychain* keychain = [[A0SimpleKeychain alloc] initWithService:@"Auth0"];
 
     if([keychain stringForKey:@"id_token"]){
-      // There is a token stored
+    	// There is a token stored
 
-      [[A0Lock sharedLock].apiClient fetchUserProfileWithIdToken:[keychain stringForKey:@"id_token"]
-      success:^(A0UserProfile * _Nonnull profile) {
-          // You have successfully retreived the user's profile, you don't need to sign in again.
-          // Let your user continue to the next step
-    } failure:^(NSError * _Nonnull error) {
-      // Something went wrong, let the user know
-    }
+    	[[A0Lock sharedLock].apiClient fetchUserProfileWithIdToken:[keychain stringForKey:@"id_token"]
+    	success:^(A0UserProfile * _Nonnull profile) {
+        	// You have successfully retreived the user's profile, you don't need to sign in again.
+        	// Let your user continue to the next step
+		} failure:^(NSError * _Nonnull error) {
+			// Something went wrong, let the user know
+		}
     }
 ```
 
@@ -102,10 +108,10 @@ If the `fetchUserProfileWithIdToken:` call is successful, you can continue as if
     [lock.apiClient fetchNewIdTokenWithRefreshToken:[keychain stringForKey:@"refresh_token"] parameters:nil success:^(A0Token * _Nonnull token) {
         [self saveCredentials:token];
         // Save the new credentials and use them instead.
-     } failure:^(NSError * _Nonnull error) {
-       [keychain clearAll]; // The saved token is invalid, delete them all from the keychain
-    // Something went wrong, let the user know
-  }];
+   	} failure:^(NSError * _Nonnull error) {
+   		[keychain clearAll]; // The saved token is invalid, delete them all from the keychain
+		// Something went wrong, let the user know
+	}];
 ```
 
 If the `fetchNewIdTokenWithRefreshToken` call fails, it means your token has been revoked or for what ever reason it's become invalid. In this case, the user will have to sign in again.
