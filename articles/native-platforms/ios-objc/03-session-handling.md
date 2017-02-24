@@ -3,29 +3,22 @@ title: Session Handling
 description: This tutorial will show you how to handle sessions in your app, with the aim of preventing the user from being asked for credentials each time the app is launched.
 ---
 
-::: panel-info System Requirements
-This tutorial and seed project have been tested with the following:
-
-* CocoaPods 1.0.0
-* XCode 7.3 (7D175)
-* Simulator - iPhone 6 - iOS 9.3 (13E230)
-  :::
-
 <%= include('../../_includes/_package', {
-  githubUrl: 'https://github.com/auth0-samples/auth0-ios-objc-sample/tree/master/03-Session-Handling',
-  pkgOrg: 'auth0-samples',
-  pkgRepo: 'auth0-samples/auth0-ios-objc-sample',
-  pkgBranch: 'master',
-  pkgPath: '03-Session-Handling',
-  pkgFilePath: '03-Session-Handling/Auth0Sample/Info.plist',
-  pkgType: 'replace'
+  org: 'auth0-samples',
+  repo: 'auth0-ios-objc-sample',
+  path: '03-Session-Handling',
+  requirements: [
+    'CocoaPods 1.1.1',
+    'Version 8.2 (8C38)',
+    'iPhone 6 - iOS 10.2 (14C89)'
+  ]
 }) %>
 
 ### In the Beginning
 
 #### i. Be familiar with Auth0
 
-This tutorial assumes you are already familiar with Auth0 and how to Sign up and Sign in using Lock or Auth0 Toolkit. **If you're not sure, check out [this tutorial](01-login) first.**
+This tutorial assumes you are already familiar with Auth0 and how to Sign up and Sign in using Lock or Auth0 Toolkit. **If you're not sure, check out [this tutorial](/quickstart/native/ios-objc/01-login) first.**
 
 #### ii. Add the SimpleKeychain dependency
 
@@ -56,7 +49,6 @@ Then, run `pod install`.
 
 > For further reference on Cocoapods, check [their official documentation](http://guides.cocoapods.org/using/getting-started.html).
 
-
 ### 1. Save the token for later
 
 First of all, you need to import the headers for Lock and SimpleKeychain
@@ -71,8 +63,7 @@ Once your user successfully signs in, you'll have a reference to a 'A0Token' obj
 > The `idToken` is a string representing, basically, the user's [JWT token](https://en.wikipedia.org/wiki/JSON_Web_Token).
 
 ```objc
-- (void) saveCredentials:(A0Token* ) token
-{
+- (void) saveCredentials:(A0Token* ) token {
     A0SimpleKeychain* keychain = [[A0SimpleKeychain alloc] initWithService:@"Auth0"];
     [keychain setString:token.idToken forKey:@"id_token"];
     [keychain setString:token.refreshToken forKey:@"refresh_token"];
@@ -81,24 +72,21 @@ Once your user successfully signs in, you'll have a reference to a 'A0Token' obj
 
 We'll be storing the 'refresh_token' too, which we'll use to get a new token, once the current one has expired.
 
-
 ### 2. Don't I know you from somewhere?
 
 Once you have stored the user's token, next time the app launches, you can use it to restore the user's profile and avoid making the user have to sign in again. First, you need to check if SimpleKeychain has a token stored:
 
 ```objc
-    A0SimpleKeychain* keychain = [[A0SimpleKeychain alloc] initWithService:@"Auth0"];
+if([keychain stringForKey:@"id_token"]){
+    // There is a token stored
 
-    if([keychain stringForKey:@"id_token"]){
-    	// There is a token stored
-
-    	[[A0Lock sharedLock].apiClient fetchUserProfileWithIdToken:[keychain stringForKey:@"id_token"]
-    	success:^(A0UserProfile * _Nonnull profile) {
-        	// You have successfully retreived the user's profile, you don't need to sign in again.
-        	// Let your user continue to the next step
-		} failure:^(NSError * _Nonnull error) {
-			// Something went wrong, let the user know
-		}
+    [[A0Lock sharedLock].apiClient fetchUserProfileWithIdToken:[keychain stringForKey:@"id_token"]
+                                                       success:^(A0UserProfile * _Nonnull profile) {
+                                                           // You have successfully retreived the user's profile, you don't need to sign in again.
+                                                           // Let your user continue to the next step
+                                                       } failure:^(NSError * _Nonnull error) {
+                                                           // Something went wrong, let the user know
+                                                       }];
     }
 ```
 
@@ -123,8 +111,8 @@ If the `fetchNewIdTokenWithRefreshToken` call fails, it means your token has bee
 Last, when you have to sign out, you only need to clear the keychain.
 
 ```objc
-    A0SimpleKeychain* keychain = [[A0SimpleKeychain alloc] initWithService:@"Auth0"];
-    [keychain clearAll];
+A0SimpleKeychain* keychain = [[A0SimpleKeychain alloc] initWithService:@"Auth0"];
+[keychain clearAll];
 ```
 
 ### 3. And we are done

@@ -1,93 +1,20 @@
 ---
 title: Login
 description: This tutorial will show you how to integrate Lock in your iOS ObjectiveC project in order to present a login screen.
-
 ---
 
-This is the very beginning of a simple, practical, multi-step quickstart that will guide you through managing authentication in your iOS apps with Auth0.
-
-::: panel-info System Requirements
-This tutorial and seed project have been tested with the following:
-
-* CocoaPods 1.0.0
-* XCode 7.3 (7D175)
-* Simulator - iPhone 6 - iOS 9.3 (13E230)
-  :::
-
 <%= include('../../_includes/_package', {
-  githubUrl: 'https://github.com/auth0-samples/auth0-ios-objc-sample/tree/master/01-Login',
-  pkgOrg: 'auth0-samples',
-  pkgRepo: 'auth0-samples/auth0-ios-objc-sample',
-  pkgBranch: 'master',
-  pkgPath: '01-Login',
-  pkgFilePath: '01-Login/Auth0Sample/Info.plist',
-  pkgType: 'replace'
+  org: 'auth0-samples',
+  repo: 'auth0-ios-objc-sample',
+  path: '01-Login',
+  requirements: [
+    'CocoaPods 1.1.1',
+    'Version 8.2 (8C38)',
+    'iPhone 6 - iOS 10.2 (14C89)'
+  ]
 }) %>
 
-**Otherwise, if you already have an existing application, please follow the steps below.**
-
-### Before Starting
-
-<div class="setup-callback">
-<p>Go to the <a href="${uiAppSettingsURL}">Application Settings</a> section in the Auth0 dashboard and make sure that <b>Allowed Callback URLs</b> contains the following value:</p>
-
-<pre><code>a0${account.clientId}://\*.auth0.com/authorize</pre></code>
-</div>
-
-
-
-### 1. Add the Auth0 Dependency
-
-Your first step is to add [Lock](https://github.com/auth0/Lock.iOS-OSX) into your project. It is basically a library for displaying native UI in your app for logging in and signing up with different social platforms via [auth0](https://auth0.com/).
-
-#### i. Carthage
-
-If you are using Carthage, add the following line to the `Cartfile`:
-
-```ruby
-github "auth0/Lock.iOS-OSX" -> 1.26
-```
-
-Then, run `carthage bootstrap`.
-
-> For more information about Carthage usage, check [their official documentation](https://github.com/Carthage/Carthage#if-youre-building-for-ios-tvos-or-watchos).
-
-#### ii. Cocoapods
-
-If you are using [Cocoapods](https://cocoapods.org/), add these lines to your `Podfile`:
-
-```ruby
-pod 'Lock', '~> 1.24'
-```
-
-Then, run `pod install`.
-
-> For further reference on Cocoapods, check [their official documentation](http://guides.cocoapods.org/using/getting-started.html).
-
-
-
-### 2. Set Your Credentials
-
-Add the following entries to your project's `Info.plist`:
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>Key</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>Auth0ClientId</td>
-    <td>${account.clientId}</td>
-  </tr>
-  <tr>
-    <td>Auth0Domain</td>
-    <td>${account.namespace}</td>
-  </tr>
-</table>
-
-### 3. Implement the Login
+### Implement the Login
 
 At this point, you're all set to implement the Login.
 
@@ -100,15 +27,15 @@ First, import the `Lock` module in the file where you want to present the login 
 Then, configure and present the login screen, like this:
 
 ```objc
-    A0Lock *lock = [A0Lock sharedLock];
+A0Lock *lock = [A0Lock sharedLock];
 
-    A0LockViewController *controller = [lock newLockViewController];
-    controller.onAuthenticationBlock = ^(A0UserProfile *profile, A0Token *token) {
-        // Do something with token & profile. e.g.: save them.
-        // And dismiss the ViewController
-        [self dismissViewControllerAnimated:YES completion:nil];
-    };
-    [self presentViewController:controller animated:YES completion:nil];
+A0LockViewController *controller = [lock newLockViewController];
+controller.onAuthenticationBlock = ^(A0UserProfile *profile, A0Token *token) {
+    // Do something with token & profile. e.g.: save them.
+    // And dismiss the ViewController
+    [self dismissViewControllerAnimated:YES completion:nil];
+};
+[self presentViewController:controller animated:YES completion:nil];
 
 ```
 
