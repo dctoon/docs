@@ -172,7 +172,7 @@ A0AuthenticationAPI *authApi = [[A0AuthenticationAPI alloc] initWithClientId:[Au
                             // Something went wrong, let the user know
                         } else {
                             // You signed up correctly, and you have the Credentials,
-                            // so no need to make the user login. He's already in.
+                            // so no need to make the user login. They're already logged in.
                         }
                     }];
 ```
